@@ -154,7 +154,7 @@ class PkgConfig(object):
             self.fpga_family = "zynq-ultrascale+"
             self.fpga_board = None
             self.fpga_board_rev = None
-            self.fpga_freq = 333
+            self.fpga_freq = 300
             self.fpga_per = 2
             self.fpga_log_axi_bus_width = 7
             self.axi_prot_bits = '010'
@@ -169,7 +169,7 @@ class PkgConfig(object):
             self.fpga_family = "zynq-ultrascale+"
             self.fpga_board = "xilinx.com:zcu104:part0"
             self.fpga_board_rev = "1.1"
-            self.fpga_freq = 333
+            self.fpga_freq = 300
             self.fpga_per = 2
             self.fpga_log_axi_bus_width = 7
             self.axi_prot_bits = '010'
