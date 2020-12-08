@@ -21,6 +21,7 @@ VTA_HW_DIR = $(CURDIR)/../..
 BUILD_DIR = $(VTA_HW_DIR)/build/hardware/xilinx
 SCRIPT_DIR = $(CURDIR)/scripts
 SRC_DIR = $(CURDIR)/src
+BOARDS_DIR = $(CURDIR)/boards
 
 # Executables
 VIVADO_HLS = vivado_hls
@@ -72,6 +73,7 @@ $(BIT_PATH): $(IP_PATH)
 		-source $(SCRIPT_DIR)/vivado.tcl \
 		-tclargs \
 			$(BUILD_DIR)/hls/$(CONF) \
+			$(BOARDS_DIR) \
 			$(CONFIG_TCL)
 
 clean:

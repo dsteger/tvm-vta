@@ -91,7 +91,7 @@ class PkgConfig(object):
         # List of source files that can be used to build standalone library.
         self.lib_source = []
         self.lib_source += glob.glob("%s/src/*.cc" % vta_hw_path)
-        if self.TARGET in ["pynq", "ultra96", "zcu104"]:
+        if self.TARGET in ["pynq", "ultra96v1", "ultra96v2", "zcu104"]:
             # add pynq drivers for any board that uses pynq driver stack (see pynq.io)
             self.lib_source += glob.glob("%s/src/pynq/*.cc" % vta_hw_path)
         elif self.TARGET in ["de10nano"]:
@@ -102,7 +102,7 @@ class PkgConfig(object):
             ]
 
         # Linker flags
-        if self.TARGET in ["pynq", "ultra96", "zcu104"]:
+        if self.TARGET in ["pynq", "ultra96v1", "ultra96v2", "zcu104"]:
             self.ldflags = [
                 "-L/usr/lib",
                 "-l:libcma.so"]
@@ -149,11 +149,11 @@ class PkgConfig(object):
             self.load_base_addr = "0xFF221000"
             self.compute_base_addr = "0xFF222000"
             self.store_base_addr = "0xFF223000"
-        elif self.TARGET == "ultra96":
+        elif self.TARGET == "ultra96v1":
             self.fpga_device = "xczu3eg-sbva484-1-e"
             self.fpga_family = "zynq-ultrascale+"
-            self.fpga_board = None
-            self.fpga_board_rev = None
+            self.fpga_board = "avnet.com:ultra96v1:part0"
+            self.fpga_board_rev = "1.2"
             self.fpga_freq = 333
             self.fpga_per = 2
             self.fpga_log_axi_bus_width = 7
@@ -164,6 +164,22 @@ class PkgConfig(object):
             self.load_base_addr = "0xA0001000"
             self.compute_base_addr = "0xA0002000"
             self.store_base_addr = "0xA0003000"
+        elif self.TARGET == "ultra96v2":
+            self.fpga_device = "xczu3eg-sbva484-1-i"
+            self.fpga_family = "zynq-ultrascale+"
+            self.fpga_board = "avnet.com:ultra96v2:part0"
+            self.fpga_board_rev = "1.1"
+            self.fpga_freq = 333
+            self.fpga_per = 2
+            self.fpga_log_axi_bus_width = 7
+            self.axi_prot_bits = '010'
+            # IP register address map
+            self.ip_reg_map_range = "0x1000"
+            self.fetch_base_addr = "0xA0000000"
+            self.load_base_addr = "0xA0001000"
+            self.compute_base_addr = "0xA0002000"
+            self.store_base_addr = "0xA0003000"
+
         elif self.TARGET == "zcu104":
             self.fpga_device = "xczu7ev-ffvc1156-2-e"
             self.fpga_family = "zynq-ultrascale+"

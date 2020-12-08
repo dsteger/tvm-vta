@@ -27,13 +27,15 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 }
 
 # Parse argument list, derive the clock to utilize
-if { [llength $argv] eq 2 } {
+if { [llength $argv] eq 3 } {
   set ip_path     [lindex $argv 0]
-  set vta_config  [lindex $argv 1]
+  set boards_path [lindex $argv 1]
+  set vta_config  [lindex $argv 2]
 } else {
   puts "Arg list incomplete: <path to ip dir> <path to vta_config.py>"
   return 1
 }
+
 
 # Source vta config variables
 source $vta_config
@@ -78,6 +80,9 @@ set fetch_ip "${ip_path}/vta_fetch/soln/impl/ip/xilinx_com_hls_fetch_1_0.zip"
 set load_ip "${ip_path}/vta_load/soln/impl/ip/xilinx_com_hls_load_1_0.zip"
 set compute_ip "${ip_path}/vta_compute/soln/impl/ip/xilinx_com_hls_compute_1_0.zip"
 set store_ip "${ip_path}/vta_store/soln/impl/ip/xilinx_com_hls_store_1_0.zip"
+
+# Add board repo path
+set_param board.repoPaths [list $boards_path]
 
 # Create custom project
 create_project -force $proj_name $proj_path -part $device
