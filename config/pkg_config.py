@@ -149,11 +149,15 @@ class PkgConfig(object):
             self.load_base_addr = "0xFF221000"
             self.compute_base_addr = "0xFF222000"
             self.store_base_addr = "0xFF223000"
-        elif self.TARGET == "ultra96":
+        elif self.TARGET == "ultra96v1" or self.TARGET == "ultra96v2":
             self.fpga_device = "xczu3eg-sbva484-1-e"
             self.fpga_family = "zynq-ultrascale+"
-            self.fpga_board = None
-            self.fpga_board_rev = None
+            if self.TARGET == "ultra96v1":
+                self.fpga_board = "em.avnet.com:ultra96v1:part0"
+                self.fpga_board_rev = "1.2"
+            elif self.TARGET == "ultra96v2":
+                self.fpga_board = "em.avnet.com:ultra96v2:part0"
+                self.fpga_board_rev = "1.0"
             self.fpga_freq = 333
             self.fpga_per = 2
             self.fpga_log_axi_bus_width = 7
