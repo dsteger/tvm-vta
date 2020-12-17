@@ -23,7 +23,7 @@ SCRIPT_DIR = $(CURDIR)/scripts
 SRC_DIR = $(CURDIR)/src
 
 # Executables
-VIVADO_HLS = vivado_hls
+VITIS_HLS = vitis_hls
 VIVADO = vivado
 
 # Process VTA JSON config
@@ -58,7 +58,7 @@ $(CONFIG_TCL): | $(BUILD_DIR)/include
 $(IP_PATH): $(SRC_DIR)/* $(CONFIG_TCL)
 	mkdir -p $(IP_BUILD_PATH)
 	cd $(IP_BUILD_PATH) && \
-		$(VIVADO_HLS) \
+		$(VITIS_HLS) \
 		-f $(SCRIPT_DIR)/hls.tcl \
 		-tclargs \
 			$(VTA_HW_DIR) \

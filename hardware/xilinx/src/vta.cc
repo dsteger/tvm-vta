@@ -87,7 +87,7 @@ void load_2d(
     memcpy(&dst[sram_idx][0],
            (const DATA_T*) &src[dram_idx * MAT_AXI_RATIO],
            x_size * ELEM_BYTES);
-#pragma HLS RESOURCE variable = sram_idx core = Mul_LUT
+#pragma HLS BIND_OP variable = sram_idx op = mul impl = fabric
     sram_idx += x_size;
     dram_idx += x_stride;
   }
@@ -135,14 +135,14 @@ void fetch(
   hls::stream<insn_T> &load_queue,
   hls::stream<insn_T> &gemm_queue,
   hls::stream<insn_T> &store_queue) {
-PRAGMA_HLS(HLS INTERFACE s_axilite port = insn_count bundle = CONTROL_BUS offset = VTA_FETCH_INSN_COUNT_OFFSET)
+PRAGMA_HLS(HLS INTERFACE s_axilite port = insn_count offset = VTA_FETCH_INSN_COUNT_OFFSET)
 #pragma HLS INTERFACE m_axi port = insns offset = slave bundle = ins_port
 #pragma HLS INTERFACE axis port = load_queue
 #pragma HLS INTERFACE axis port = gemm_queue
 #pragma HLS INTERFACE axis port = store_queue
-#pragma HLS INTERFACE s_axilite port = return bundle = CONTROL_BUS
+#pragma HLS INTERFACE s_axilite port = return
 
-  INSN_DECODE: for (int pc = 0; pc < insn_count; pc++) {
+  INSN_DECODE: for (uint32_t pc = 0; pc < insn_count; pc++) {
 #pragma HLS PIPELINE
     // Read instruction fields
     insn_T raw_insn = insns[pc];
@@ -179,11 +179,9 @@ void load(
 #pragma HLS INTERFACE axis port = load_queue
 #pragma HLS INTERFACE axis port = g2l_dep_queue
 #pragma HLS INTERFACE axis port = l2g_dep_queue
-#pragma HLS INTERFACE bram port = wgt_mem
-#pragma HLS INTERFACE bram port = inp_mem
-#pragma HLS INTERFACE s_axilite port = return bundle = CONTROL_BUS
-#pragma HLS RESOURCE variable = inp_mem core = RAM_1P
-#pragma HLS RESOURCE variable = wgt_mem core = RAM_1P
+#pragma HLS INTERFACE bram port = wgt_mem storage_type = RAM_1P
+#pragma HLS INTERFACE bram port = inp_mem storage_type = RAM_1P
+#pragma HLS INTERFACE s_axilite port = return
 
   // Pop load instruction
   insn_T raw_insn = load_queue.read();
@@ -199,9 +197,9 @@ void load(
   // Pre-processing
   memop_sram_T x_width = (insn.x_pad_0 + insn.x_size + insn.x_pad_1);
   memop_sram_T y_offset_0 = x_width * insn.y_pad_0;
-#pragma HLS RESOURCE variable = y_offset_0 core = Mul_LUT latency = 4
+#pragma HLS BIND_OP variable = y_offset_0 op = mul impl = fabric latency = 4
   memop_sram_T y_offset_1 = x_width * insn.y_pad_1;
-#pragma HLS RESOURCE variable = y_offset_1 core = Mul_LUT latency = 4
+#pragma HLS BIND_OP variable = y_offset_1 op = mul impl = fabric latency = 4
 
   if (insn.memory_type == VTA_MEM_ID_INP) {
     load_pad_2d<bus_T, INP_MAT_AXI_RATIO, VTA_INP_ELEM_BYTES>(
@@ -424,7 +422,7 @@ void compute(
   bus_T inp_mem[VTA_INP_BUFF_DEPTH][INP_MAT_AXI_RATIO],
   bus_T wgt_mem[VTA_WGT_BUFF_DEPTH][WGT_MAT_AXI_RATIO],
   bus_T out_mem[VTA_ACC_BUFF_DEPTH][OUT_MAT_AXI_RATIO]) {
-PRAGMA_HLS(HLS INTERFACE s_axilite port = done bundle = CONTROL_BUS offset = VTA_COMPUTE_DONE_WR_OFFSET)
+PRAGMA_HLS(HLS INTERFACE s_axilite port = done offset = VTA_COMPUTE_DONE_WR_OFFSET)
 #pragma HLS INTERFACE m_axi port = uops offset = slave bundle = uop_port
 #pragma HLS INTERFACE m_axi port = biases offset = slave bundle = data_port
 #pragma HLS INTERFACE axis port = gemm_queue
@@ -432,20 +430,17 @@ PRAGMA_HLS(HLS INTERFACE s_axilite port = done bundle = CONTROL_BUS offset = VTA
 #pragma HLS INTERFACE axis port = s2g_dep_queue
 #pragma HLS INTERFACE axis port = g2l_dep_queue
 #pragma HLS INTERFACE axis port = g2s_dep_queue
-#pragma HLS INTERFACE bram port = inp_mem
-#pragma HLS INTERFACE bram port = wgt_mem
-#pragma HLS INTERFACE bram port = out_mem
-#pragma HLS INTERFACE s_axilite port = return bundle = CONTROL_BUS
-#pragma HLS RESOURCE variable = inp_mem core = RAM_1P
-#pragma HLS RESOURCE variable = wgt_mem core = RAM_1P
-#pragma HLS RESOURCE variable = out_mem core = RAM_1P
+#pragma HLS INTERFACE bram port = inp_mem storage_type=RAM_1P
+#pragma HLS INTERFACE bram port = wgt_mem storage_type=RAM_1P
+#pragma HLS INTERFACE bram port = out_mem storage_type=RAM_1P
+#pragma HLS INTERFACE s_axilite port = return
 
   // Micro-op storage
   static uop_T uop_mem[VTA_UOP_BUFF_DEPTH];
 
   // Accumulator storage
   static bus_T acc_mem[VTA_ACC_BUFF_DEPTH][ACC_MAT_AXI_RATIO];
-#pragma HLS ARRAY_RESHAPE variable = acc_mem complete dim=2
+#pragma HLS ARRAY_RESHAPE variable = acc_mem complete dim = 2
 // This is necessary to obtain II=1
 #pragma HLS DEPENDENCE variable = acc_mem inter false
 
@@ -525,8 +520,8 @@ void store(
 #pragma HLS INTERFACE axis port = g2s_dep_queue
 #pragma HLS INTERFACE axis port = s2g_dep_queue
 #pragma HLS INTERFACE bram port = out_mem
-#pragma HLS INTERFACE s_axilite port = return bundle = CONTROL_BUS
 #pragma HLS RESOURCE variable = out_mem core = RAM_1P
+#pragma HLS INTERFACE s_axilite port = return
 
   // Pop store instruction
   insn_T raw_insn = store_queue.read();
@@ -551,7 +546,8 @@ void store(
       const_cast<bus_T*>(&outputs[dram_idx * OUT_MAT_AXI_RATIO]),
       (const bus_T*) &out_mem[sram_idx][0],
       insn.x_size * VTA_OUT_ELEM_BYTES);
-#pragma HLS RESOURCE variable = sram_idx core = Mul_LUT
+#pragma HLS BIND_OP variable = sram_idx op = mul impl = fabric
+
     sram_idx += insn.x_size;
     dram_idx += insn.x_stride;
   }
@@ -570,14 +566,14 @@ void vta(
   volatile bus_T *weights,
   volatile bus_T *biases,
   volatile bus_T *outputs) {
-#pragma HLS INTERFACE s_axilite port = insn_count bundle = CONTROL_BUS
+#pragma HLS INTERFACE s_axilite port = insn_count
 #pragma HLS INTERFACE m_axi port = insns offset = slave bundle = ins_port
 #pragma HLS INTERFACE m_axi port = uops offset = slave bundle = uop_port
 #pragma HLS INTERFACE m_axi port = inputs offset = slave bundle = data_port
 #pragma HLS INTERFACE m_axi port = weights offset = slave bundle = data_port
 #pragma HLS INTERFACE m_axi port = biases offset = slave bundle = data_port
 #pragma HLS INTERFACE m_axi port = outputs offset = slave bundle = data_port
-#pragma HLS INTERFACE s_axilite port = return bundle = CONTROL_BUS
+#pragma HLS INTERFACE s_axilite port = return
 
   // Instantiate temporary instruction queues (used for peeking)
   hls::stream<insn_T> tmp_load_queue;

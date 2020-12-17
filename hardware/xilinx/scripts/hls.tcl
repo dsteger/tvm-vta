@@ -92,7 +92,7 @@ set_top vta
 add_files $src_dir/vta.cc -cflags $cflags
 add_files -tb $sim_dir/vta_test.cc -cflags $cflags
 add_files -tb $test_dir/test_lib.cc -cflags $cflags
-open_solution "soln"
+open_solution "soln" -flow_target vivado
 init_design
 csim_design -clean
 close_project
@@ -101,7 +101,7 @@ close_project
 open_project vta_fetch
 set_top fetch
 add_files $src_dir/vta.cc -cflags $cflags
-open_solution "soln"
+open_solution "soln" -flow_target vivado
 init_design
 csynth_design
 export_design -format ip_catalog
@@ -111,7 +111,7 @@ close_project
 open_project vta_load
 set_top load
 add_files $src_dir/vta.cc -cflags $cflags
-open_solution "soln"
+open_solution "soln" -flow_target vivado
 init_design
 csynth_design
 export_design -format ip_catalog
@@ -121,7 +121,7 @@ close_project
 open_project vta_compute
 set_top compute
 add_files $src_dir/vta.cc -cflags $cflags
-open_solution "soln"
+open_solution "soln" -flow_target vivado
 init_design
 csynth_design
 export_design -format ip_catalog
@@ -131,7 +131,7 @@ close_project
 open_project vta_store
 set_top store
 add_files $src_dir/vta.cc -cflags $cflags
-open_solution "soln"
+open_solution "soln" -flow_target vivado
 init_design
 csynth_design
 export_design -format ip_catalog

@@ -16,7 +16,7 @@
 # under the License.
 
 # Check if script is running in correct Vivado version.
-set scripts_vivado_version 2020.1
+set scripts_vivado_version 2020.2
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
@@ -224,17 +224,17 @@ for {set i 0} {$i < $inp_part} {incr i} {
   [ init_bram_property $inp_mem $inp_mem_width $inp_mem_depth ]
   # If module has more than 1 mem port, the naming convention changes
   if {$inp_part > 1} {
-    set porta [get_bd_intf_pins load_0/inp_mem_${i}_V_PORTA]
-    set portb [get_bd_intf_pins compute_0/inp_mem_${i}_V_PORTA]
+    set porta [get_bd_intf_pins load_0/inp_mem_${i}_PORTA]
+    set portb [get_bd_intf_pins compute_0/inp_mem_${i}_PORTA]
   } else {
-    set porta [get_bd_intf_pins load_0/inp_mem_V_PORTA]
-    set portb [get_bd_intf_pins compute_0/inp_mem_V_PORTA]
+    set porta [get_bd_intf_pins load_0/inp_mem_PORTA]
+    set portb [get_bd_intf_pins compute_0/inp_mem_PORTA]
   }
   # Create interface connections
-  connect_bd_intf_net -intf_net load_0_inp_mem_V_PORTA \
+  connect_bd_intf_net -intf_net load_0_inp_mem_PORTA \
     [get_bd_intf_pins $inp_mem/BRAM_PORTA] \
     $porta
-  connect_bd_intf_net -intf_net compute_0_inp_mem_V_PORTA \
+  connect_bd_intf_net -intf_net compute_0_inp_mem_PORTA \
     [get_bd_intf_pins $inp_mem/BRAM_PORTB] \
     $portb
 }
@@ -246,17 +246,17 @@ for {set i 0} {$i < $wgt_part} {incr i} {
   [ init_bram_property $wgt_mem $wgt_mem_width $wgt_mem_depth ]
   # If module has more than 1 mem port, the naming convention changes
   if {$wgt_part > 1} {
-    set porta [get_bd_intf_pins load_0/wgt_mem_${i}_V_PORTA]
-    set portb [get_bd_intf_pins compute_0/wgt_mem_${i}_V_PORTA]
+    set porta [get_bd_intf_pins load_0/wgt_mem_${i}_PORTA]
+    set portb [get_bd_intf_pins compute_0/wgt_mem_${i}_PORTA]
   } else {
-    set porta [get_bd_intf_pins load_0/wgt_mem_V_PORTA]
-    set portb [get_bd_intf_pins compute_0/wgt_mem_V_PORTA]
+    set porta [get_bd_intf_pins load_0/wgt_mem_PORTA]
+    set portb [get_bd_intf_pins compute_0/wgt_mem_PORTA]
   }
   # Create interface connections
-  connect_bd_intf_net -intf_net load_0_wgt_mem_${i}_V_PORTA \
+  connect_bd_intf_net -intf_net load_0_wgt_mem_${i}_PORTA \
     [get_bd_intf_pins $wgt_mem/BRAM_PORTA] \
     $porta
-  connect_bd_intf_net -intf_net compute_0_wgt_mem_${i}_V_PORTA \
+  connect_bd_intf_net -intf_net compute_0_wgt_mem_${i}_PORTA \
     [get_bd_intf_pins $wgt_mem/BRAM_PORTB] \
     $portb
   if { $device_family eq "zynq-ultrascale+" && $i < $num_wgt_mem_uram } {
@@ -271,17 +271,17 @@ for {set i 0} {$i < $out_part} {incr i} {
   [ init_bram_property $out_mem $out_mem_width $out_mem_depth ]
   # If module has more than 1 mem port, the naming convention changes
   if {$out_part > 1} {
-    set porta [get_bd_intf_pins compute_0/out_mem_${i}_V_PORTA]
-    set portb [get_bd_intf_pins store_0/out_mem_${i}_V_PORTA]
+    set porta [get_bd_intf_pins compute_0/out_mem_${i}_PORTA]
+    set portb [get_bd_intf_pins store_0/out_mem_${i}_PORTA]
   } else {
-    set porta [get_bd_intf_pins compute_0/out_mem_V_PORTA]
-    set portb [get_bd_intf_pins store_0/out_mem_V_PORTA]
+    set porta [get_bd_intf_pins compute_0/out_mem_PORTA]
+    set portb [get_bd_intf_pins store_0/out_mem_PORTA]
   }
   # Create interface connections
-  connect_bd_intf_net -intf_net compute_0_out_mem_${i}_V_PORTA \
+  connect_bd_intf_net -intf_net compute_0_out_mem_${i}_PORTA \
     [get_bd_intf_pins $out_mem/BRAM_PORTA] \
     $porta
-  connect_bd_intf_net -intf_net store_0_out_mem_${i}_V_PORTA \
+  connect_bd_intf_net -intf_net store_0_out_mem_${i}_PORTA \
     [get_bd_intf_pins $out_mem/BRAM_PORTB] \
     $portb
 }
@@ -324,20 +324,20 @@ if { $device_family eq "zynq-7000" } {
 }
 
 # Create interface connections
-connect_bd_intf_net -intf_net axi_xbar_M00_AXI [get_bd_intf_pins axi_xbar/M00_AXI] [get_bd_intf_pins fetch_0/s_axi_CONTROL_BUS]
-connect_bd_intf_net -intf_net axi_xbar_M01_AXI [get_bd_intf_pins axi_xbar/M01_AXI] [get_bd_intf_pins load_0/s_axi_CONTROL_BUS]
-connect_bd_intf_net -intf_net axi_xbar_M02_AXI [get_bd_intf_pins axi_xbar/M02_AXI] [get_bd_intf_pins compute_0/s_axi_CONTROL_BUS]
-connect_bd_intf_net -intf_net axi_xbar_M03_AXI [get_bd_intf_pins axi_xbar/M03_AXI] [get_bd_intf_pins store_0/s_axi_CONTROL_BUS]
+connect_bd_intf_net -intf_net axi_xbar_M00_AXI [get_bd_intf_pins axi_xbar/M00_AXI] [get_bd_intf_pins fetch_0/s_axi_control]
+connect_bd_intf_net -intf_net axi_xbar_M01_AXI [get_bd_intf_pins axi_xbar/M01_AXI] [get_bd_intf_pins load_0/s_axi_control]
+connect_bd_intf_net -intf_net axi_xbar_M02_AXI [get_bd_intf_pins axi_xbar/M02_AXI] [get_bd_intf_pins compute_0/s_axi_control]
+connect_bd_intf_net -intf_net axi_xbar_M03_AXI [get_bd_intf_pins axi_xbar/M03_AXI] [get_bd_intf_pins store_0/s_axi_control]
 connect_bd_intf_net -intf_net fetch_0_l2g_dep_queue_V [get_bd_intf_pins l2g_queue/S_AXIS] [get_bd_intf_pins load_0/l2g_dep_queue_V]
-connect_bd_intf_net -intf_net fetch_0_load_queue_V_V [get_bd_intf_pins fetch_0/load_queue_V_V] [get_bd_intf_pins load_queue/S_AXIS]
-connect_bd_intf_net -intf_net fetch_0_gemm_queue_V_V [get_bd_intf_pins fetch_0/gemm_queue_V_V] [get_bd_intf_pins gemm_queue/S_AXIS]
-connect_bd_intf_net -intf_net fetch_0_store_queue_V_V [get_bd_intf_pins fetch_0/store_queue_V_V] [get_bd_intf_pins store_queue/S_AXIS]
+connect_bd_intf_net -intf_net fetch_0_load_queue_V [get_bd_intf_pins fetch_0/load_queue_V] [get_bd_intf_pins load_queue/S_AXIS]
+connect_bd_intf_net -intf_net fetch_0_gemm_queue_V [get_bd_intf_pins fetch_0/gemm_queue_V] [get_bd_intf_pins gemm_queue/S_AXIS]
+connect_bd_intf_net -intf_net fetch_0_store_queue_V [get_bd_intf_pins fetch_0/store_queue_V] [get_bd_intf_pins store_queue/S_AXIS]
 connect_bd_intf_net -intf_net compute_0_g2l_dep_queue_V [get_bd_intf_pins compute_0/g2l_dep_queue_V] [get_bd_intf_pins g2l_queue/S_AXIS]
 connect_bd_intf_net -intf_net compute_0_g2s_dep_queue_V [get_bd_intf_pins compute_0/g2s_dep_queue_V] [get_bd_intf_pins g2s_queue/S_AXIS]
 connect_bd_intf_net -intf_net store_0_s2g_dep_queue_V [get_bd_intf_pins s2g_queue/S_AXIS] [get_bd_intf_pins store_0/s2g_dep_queue_V]
-connect_bd_intf_net -intf_net load_queue_M_AXIS [get_bd_intf_pins load_0/load_queue_V_V] [get_bd_intf_pins load_queue/M_AXIS]
-connect_bd_intf_net -intf_net gemm_queue_M_AXIS [get_bd_intf_pins compute_0/gemm_queue_V_V] [get_bd_intf_pins gemm_queue/M_AXIS]
-connect_bd_intf_net -intf_net store_queue_M_AXIS [get_bd_intf_pins store_0/store_queue_V_V] [get_bd_intf_pins store_queue/M_AXIS]
+connect_bd_intf_net -intf_net load_queue_M_AXIS [get_bd_intf_pins load_0/load_queue_V] [get_bd_intf_pins load_queue/M_AXIS]
+connect_bd_intf_net -intf_net gemm_queue_M_AXIS [get_bd_intf_pins compute_0/gemm_queue_V] [get_bd_intf_pins gemm_queue/M_AXIS]
+connect_bd_intf_net -intf_net store_queue_M_AXIS [get_bd_intf_pins store_0/store_queue_V] [get_bd_intf_pins store_queue/M_AXIS]
 connect_bd_intf_net -intf_net l2g_queue_M_AXIS [get_bd_intf_pins compute_0/l2g_dep_queue_V] [get_bd_intf_pins l2g_queue/M_AXIS]
 connect_bd_intf_net -intf_net g2l_queue_M_AXIS [get_bd_intf_pins g2l_queue/M_AXIS] [get_bd_intf_pins load_0/g2l_dep_queue_V]
 connect_bd_intf_net -intf_net g2s_queue_M_AXIS [get_bd_intf_pins g2s_queue/M_AXIS] [get_bd_intf_pins store_0/g2s_dep_queue_V]
@@ -405,10 +405,10 @@ connect_bd_net -net processing_system_clk \
   $saxi_clk
 
 # Create address segments
-create_bd_addr_seg -range $ip_reg_map_range -offset $fetch_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs fetch_0/s_axi_CONTROL_BUS/Reg] SEG_fetch_0_Reg
-create_bd_addr_seg -range $ip_reg_map_range -offset $load_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs load_0/s_axi_CONTROL_BUS/Reg] SEG_load_0_Reg
-create_bd_addr_seg -range $ip_reg_map_range -offset $compute_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs compute_0/s_axi_CONTROL_BUS/Reg] SEG_compute_0_Reg
-create_bd_addr_seg -range $ip_reg_map_range -offset $store_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs store_0/s_axi_CONTROL_BUS/Reg] SEG_store_0_Reg
+create_bd_addr_seg -range $ip_reg_map_range -offset $fetch_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs fetch_0/s_axi_control/Reg] SEG_fetch_0_Reg
+create_bd_addr_seg -range $ip_reg_map_range -offset $load_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs load_0/s_axi_control/Reg] SEG_load_0_Reg
+create_bd_addr_seg -range $ip_reg_map_range -offset $compute_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs compute_0/s_axi_control/Reg] SEG_compute_0_Reg
+create_bd_addr_seg -range $ip_reg_map_range -offset $store_base_addr [get_bd_addr_spaces processing_system/Data] [get_bd_addr_segs store_0/s_axi_control/Reg] SEG_store_0_Reg
 if { $device_family eq "zynq-7000" } {
   create_bd_addr_seg -range 0x40000000 -offset 0x00000000 [get_bd_addr_spaces compute_0/Data_m_axi_uop_port] [get_bd_addr_segs processing_system/S_AXI_ACP/ACP_DDR_LOWOCM] SEG_processing_system_ACP_DDR_LOWOCM
   create_bd_addr_seg -range 0x40000000 -offset 0x00000000 [get_bd_addr_spaces compute_0/Data_m_axi_data_port] [get_bd_addr_segs processing_system/S_AXI_ACP/ACP_DDR_LOWOCM] SEG_processing_system_ACP_DDR_LOWOCM
